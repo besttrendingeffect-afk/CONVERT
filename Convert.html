@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI to Human Text Converter</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #7209b7;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7ff;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        main {
+            padding: 3rem 0;
+        }
+        
+        .converter-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+        }
+        
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            resize: vertical;
+            transition: border 0.3s;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        button {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .convert-btn {
+            background-color: var(--primary);
+            color: white;
+            flex: 1;
+        }
+        
+        .convert-btn:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+        }
+        
+        .clear-btn {
+            background-color: #e9ecef;
+            color: var(--dark);
+        }
+        
+        .clear-btn:hover {
+            background-color: #dee2e6;
+        }
+        
+        .result-container {
+            margin-top: 2rem;
+            border-top: 1px solid #eee;
+            padding-top: 1.5rem;
+        }
+        
+        .result-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--secondary);
+        }
+        
+        #result {
+            background-color: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            min-height: 100px;
+            white-space: pre-wrap;
+            border-left: 4px solid var(--success);
+        }
+        
+        .features-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .feature-card h3 {
+            margin-bottom: 1rem;
+            color: var(--secondary);
+        }
+        
+        .guide-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .guide-section h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--secondary);
+        }
+        
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .step-number {
+            background-color: var(--primary);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .step-content h3 {
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+        
+        footer {
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 1rem 0;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .button-group {
+                flex-direction: column;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>AI to Human Text Converter</h1>
+            <p>Transform AI-generated content into natural, human-like text instantly</p>
+        </div>
+    </header>
+    
+    <main class="container">
+        <section class="converter-section">
+            <div class="input-group">
+                <label for="ai-text">Paste your AI-generated text here:</label>
+                <textarea id="ai-text" placeholder="Enter AI-generated text that you want to convert to human-like text..."></textarea>
+            </div>
+            
+            <div class="button-group">
+                <button class="convert-btn" id="convert-btn">Convert to Human Text</button>
+                <button class="clear-btn" id="clear-btn">Clear Text</button>
+            </div>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Converting your text...</p>
+            </div>
+            
+            <div class="result-container">
+                <h3 class="result-title">Human-like Text Result:</h3>
+                <div id="result">Your converted text will appear here...</div>
+            </div>
+        </section>
+        
+        <section class="features-section">
+            <div class="feature-card">
+                <div class="feature-icon">🚀</div>
+                <h3>Instant Conversion</h3>
+                <p>Transform AI text to human-like content in seconds with our advanced algorithm.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Natural Language</h3>
+                <p>Our converter makes AI text sound more natural, engaging, and human-like.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Privacy Focused</h3>
+                <p>Your text is processed securely and never stored on our servers.</p>
+            </div>
+        </section>
+        
+        <section class="guide-section">
+            <h2>How to Use This Tool</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Copy AI Text</h3>
+                        <p>Copy the AI-generated text from ChatGPT, Jasper, or any other AI writing tool.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Paste in the Box</h3>
+                        <p>Paste the copied text into the input box above.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Click Convert</h3>
+                        <p>Click the "Convert to Human Text" button to transform your text.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Copy Result</h3>
+                        <p>Copy the converted text from the result box and use it wherever you need.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>AI to Human Text Converter &copy; 2023 | Make AI content sound human</p>
+        </div>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const convertBtn = document.getElementById('convert-btn');
+            const clearBtn = document.getElementById('clear-btn');
+            const aiText = document.getElementById('ai-text');
+            const result = document.getElementById('result');
+            const loading = document.getElementById('loading');
+            
+            // Conversion function
+            function convertToHumanText(text) {
+                // This is a simplified conversion algorithm
+                // In a real implementation, you would use a more sophisticated approach
+                
+                // Replace common AI patterns with more human-like expressions
+                let converted = text
+                    .replace(/\bhowever\b/gi, 'but')
+                    .replace(/\bfurthermore\b/gi, 'also')
+                    .replace(/\bmoreover\b/gi, 'what\'s more')
+                    .replace(/\bin conclusion\b/gi, 'to sum up')
+                    .replace(/\bit is important to note that\b/gi, 'keep in mind that')
+                    .replace(/\bwith regard to\b/gi, 'about')
+                    .replace(/\bprior to\b/gi, 'before')
+                    .replace(/\butilize\b/gi, 'use')
+                    .replace(/\bcommence\b/gi, 'start')
+                    .replace(/\bterminate\b/gi, 'end')
+                    .replace(/\bapproximately\b/gi, 'about')
+                    .replace(/\bsubsequently\b/gi, 'then')
+                    .replace(/\bconsequently\b/gi, 'so')
+                    .replace(/\bnevertheless\b/gi, 'still')
+                    .replace(/\bnotwithstanding\b/gi, 'despite this')
+                    .replace(/\bin order to\b/gi, 'to')
+                    .replace(/\bwith the aim of\b/gi, 'to')
+                    .replace(/\bfor the purpose of\b/gi, 'to')
+                    .replace(/\bdespite the fact that\b/gi, 'even though')
+                    .replace(/\bdue to the fact that\b/gi, 'because')
+                    .replace(/\bin the event that\b/gi, 'if')
+                    .replace(/\bwith respect to\b/gi, 'about')
+                    .replace(/\bas a result of\b/gi, 'because of');
+                
+                // Add some natural language variations
+                const sentences = converted.split('. ');
+                let humanizedSentences = sentences.map(sentence => {
+                    if (sentence.length > 0) {
+                        // Sometimes start with "Well, " or "So, " for more natural flow
+                        if (Math.random() > 0.8 && !sentence.toLowerCase().startsWith('well') && !sentence.toLowerCase().startsWith('so')) {
+                            sentence = (Math.random() > 0.5 ? 'Well, ' : 'So, ') + sentence.toLowerCase();
+                        }
+                        
+                        // Sometimes use contractions for more casual tone
+                        sentence = sentence
+                            .replace(/\bdo not\b/gi, 'don\'t')
+                            .replace(/\bdoes not\b/gi, 'doesn\'t')
+                            .replace(/\bcan not\b/gi, 'can\'t')
+                            .replace(/\bcannot\b/gi, 'can\'t')
+                            .replace(/\bwill not\b/gi, 'won\'t')
+                            .replace(/\bshould not\b/gi, 'shouldn\'t')
+                            .replace(/\bcould not\b/gi, 'couldn\'t')
+                            .replace(/\bwould not\b/gi, 'wouldn\'t')
+                            .replace(/\bit is\b/gi, 'it\'s')
+                            .replace(/\bthat is\b/gi, 'that\'s')
+                            .replace(/\bthere is\b/gi, 'there\'s')
+                            .replace(/\bthey are\b/gi, 'they\'re')
+                            .replace(/\bwe are\b/gi, 'we\'re')
+                            .replace(/\byou are\b/gi, 'you\'re')
+                            .replace(/\bI am\b/gi, 'I\'m');
+                    }
+                    return sentence;
+                });
+                
+                converted = humanizedSentences.join('. ');
+                
+                return converted;
+            }
+            
+            // Event listeners
+            convertBtn.addEventListener('click', function() {
+                const text = aiText.value.trim();
+                
+                if (text === '') {
+                    alert('Please enter some AI-generated text to convert.');
+                    return;
+                }
+                
+                // Show loading indicator
+                loading.style.display = 'block';
+                result.textContent = 'Converting...';
+                
+                // Simulate processing time (in a real app, this would be an API call)
+                setTimeout(function() {
+                    const convertedText = convertToHumanText(text);
+                    result.textContent = convertedText;
+                    loading.style.display = 'none';
+                }, 1500);
+            });
+            
+            clearBtn.addEventListener('click', function() {
+                aiText.value = '';
+                result.textContent = 'Your converted text will appear here...';
+            });
+        });
+    </script>
+</body>
+</html>
